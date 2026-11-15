@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>try{var t=localStorage.getItem("qb_theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<title>QueueBite | Canteen Order Queue</title>
+<link rel="stylesheet" href="style.css?v=20">
+</head>
+<body>
+<div class="app" id="app">
+  <header>
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#F9B233"/><path d="M9 21h22a11 11 0 0 1-22 0z" fill="#2A1B16"/><path d="M14 8c-2 2 2 3 0 5M20 8c-2 2 2 3 0 5M26 8c-2 2 2 3 0 5" fill="none" stroke="#2A1B16" stroke-width="2" stroke-linecap="round"/></svg>
+      <h1>QueueBite</h1>
+    </div>
+    <div class="hbtns"><button class="themebtn" id="themeBtn" type="button"></button><button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button></div>
+  </header>
+  <div class="menu hide" id="menu"></div>
+
+  <!-- STUDENT: login -->
+  <main id="login">
+    <h2>Welcome back</h2>
+    <label for="le">Student email</label>
+    <input id="le" type="email" placeholder="e.g. juan@school.edu" autocomplete="email">
+    <label for="lp">Password</label>
+    <input id="lp" type="password" placeholder="********" autocomplete="current-password">
+    <p class="err" id="lerr" role="alert"></p>
+    <button class="btn" id="loginBtn">Log in</button>
+    <p class="alt">No account? <a data-go="register" tabindex="0">Register</a></p>
+    <p class="alt">Canteen staff? <a data-go="gate" tabindex="0">Staff login</a></p>
+  </main>
+
+  <!-- STUDENT: register -->
+  <main id="register" class="hide">
+    <h2>Create account</h2>
+    <label for="rn">Full name</label>
+    <input id="rn" placeholder="e.g. Juan Dela Cruz" autocomplete="name">
+    <label for="re">Student email</label>
+    <input id="re" type="email" placeholder="e.g. juan@school.edu" autocomplete="email">
+    <label for="rp">Password</label>
+    <input id="rp" type="password" placeholder="At least 6 characters" autocomplete="new-password">
+    <p class="err" id="rerr" role="alert"></p>
+    <button class="btn" id="regBtn">Register</button>
+    <p class="alt">Have an account? <a data-go="login" tabindex="0">Log in</a></p>
+  </main>
+
+  <!-- STUDENT: homepage -->
+  <main id="home" class="hide">
+    <div class="board">
+      <div><small>Your number</small><div class="num" id="myNum">--</div></div>
+      <div class="srv">Now serving<b id="serving">--</b></div>
+    </div>
+    <p class="hello" id="hello"></p>
+    <h2 class="sub">What's available <span class="cnt" id="availCnt"></span></h2>
+    <div id="menuList" class="grid"></div>
+    <div id="soldBox" class="hide"><h2 class="sub dim">Sold out</h2><div id="soldList" class="grid"></div></div>
+    <div class="total"><span>Total</span><span id="total">P0</span></div>
+    <button class="btn" id="orderBtn" disabled>Place order</button>
+    <p class="note" id="note"></p>
+    <label class="vt"><input type="checkbox" id="svoice" checked> Voice announcements</label>
+    <p class="note">Keep this page open and your volume up to hear your number called.</p>
+  </main>
+
+  <!-- STAFF: login -->
+  <main id="gate" class="hide">
+    <h2>Staff login</h2>
+    <label for="pin">Staff PIN</label>
+    <input id="pin" type="password" inputmode="numeric" placeholder="Enter PIN" autocomplete="off">
+    <p class="err" id="perr" role="alert"></p>
+    <button class="btn" id="pinBtn">Log in</button>
+    <p class="alt">Student? <a data-go="login" tabindex="0">Back to student login</a></p>
+  </main>
+
+  <!-- STAFF: orders -->
+  <main id="staff" class="hide">
+    <div class="board">
+      <div><small>Now serving</small><div class="num" id="sServing">--</div></div>
+      <div class="srv">Waiting<b id="waiting">0</b></div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="on" data-tab="paneOrders">Orders</button>
+      <button data-tab="paneMenu">Menu</button>
+      <button data-tab="paneHistory">History</button>
+    </div>
+
+    <div id="paneOrders">
+      <div class="actions">
+        <button class="btn" id="nextBtn">Call next</button>
+        <button class="btn ghost" id="resetBtn">Clear all orders</button>
+      </div>
+      <div class="voice">
+        <button class="btn ghost" id="repeatBtn" type="button">Repeat announcement</button>
+        <label><input type="checkbox" id="voiceOn" checked> Voice on</label>
+      </div>
+      <p class="note" id="vmsg" role="status"></p>
+      <h2 class="sub">Orders</h2>
+      <div id="orders"></div>
+    </div>
+
+    <div id="paneMenu" class="hide">
+      <h2 class="sub">Menu</h2>
+      <div class="addrow">
+        <input id="mname" placeholder="Item name, e.g. Spaghetti" maxlength="80" aria-label="Item name">
+        <input id="mprice" type="number" min="1" placeholder="Price" aria-label="Price in pesos">
+        <label class="photo"><input type="file" id="mfile" accept="image/*" hidden><span id="mfileName">Add photo</span></label>
+        <button class="btn" id="mAdd">Add item</button>
+      </div>
+      <p class="err" id="merr" role="alert"></p>
+      <div id="mwrap">
+        <h2 class="sub">Available to sell <span class="cnt" id="mAvail"></span></h2>
+        <div id="mlist" class="grid"></div>
+        <div id="mOffBox" class="hide"><h2 class="sub dim">Sold out</h2><div id="mlistOff" class="grid"></div></div>
+      </div>
+    </div>
+
+    <div id="paneHistory" class="hide">
+      <h2 class="sub">History</h2>
+      <div class="sumrow" id="hsum"></div>
+      <div class="tabs sm" id="hfilter">
+        <button class="on" data-f="all">All</button><button data-f="sold">Sold</button><button data-f="added">Added</button><button data-f="menu">Menu changes</button>
+      </div>
+      <div id="hlist"></div>
+      <button class="btn ghost" id="hClear" type="button">Clear history</button>
+    </div>
+  </main>
+</div>
+
+<script>
+/* manual light / dark switch: click the header button to flip the whole page */
+(function () {
+  var btn = document.getElementById("themeBtn"), root = document.documentElement, mq = window.matchMedia("(prefers-color-scheme: dark)");
+  var SUN = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+  var MOON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>';
+  function now() { return root.getAttribute("data-theme") || (mq.matches ? "dark" : "light"); }
+  function paint() {
+    var dark = now() === "dark";
+    btn.innerHTML = (dark ? SUN : MOON) + "<span>" + (dark ? "Light mode" : "Dark mode") + "</span>";
+    btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+  }
+  btn.addEventListener("click", function () {
+    var next = now() === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("qb_theme", next); } catch (e) {}
+    paint();
+  });
+  if (mq.addEventListener) mq.addEventListener("change", paint);
+  paint();
+})();
+</script>
+<script src="script.js?v=20"></script>
+</body>
+</html>
